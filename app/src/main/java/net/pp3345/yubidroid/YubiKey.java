@@ -14,17 +14,18 @@ public class YubiKey {
 	private static final int  YUBIKEY_USER_INTERACTION_TIMEOUT_MS = 256000;
 	private static final char YUBIKEY_CRC_16_OK_RESIDUAL          = 0xf0b8;
 
-	private static final int HID_GET_REPORT                = 0x1;
-	private static final int HID_SET_REPORT                = 0x9;
-	private static final int REPORT_TYPE_FEATURE           = 0b11 << 8;
-	private static final int REPORT_TYPE_FEATURE_DATA_SIZE = 8;
+	private static final int  HID_GET_REPORT                = 0x1;
+	private static final int  HID_SET_REPORT                = 0x9;
+	private static final int  REPORT_TYPE_FEATURE           = 0b11 << 8;
+	private static final int  REPORT_TYPE_FEATURE_DATA_SIZE = 8;
+	private static final byte DUMMY_REPORT                  = (byte) 0x8f;
 
 	private static final short STATUS_FLAG_WAITING          = 0x20;
 	private static final short STATUS_FLAG_RESPONSE_PENDING = 0x40;
 	private static final short STATUS_FLAG_WRITE            = 0x80;
 
-	private static final byte WRITE_PAYLOAD_LENGTH = 64;
-	private static final int CHALLENGE_RESPONSE_LENGTH = 20;
+	private static final byte WRITE_PAYLOAD_LENGTH      = 64;
+	private static final int  CHALLENGE_RESPONSE_LENGTH = 20;
 
 	public enum Type {
 		STANDARD(0x0010, "YubiKey", "Version 1 or 2"),
@@ -78,6 +79,7 @@ public class YubiKey {
 	}
 
 	public enum Slot {
+		DUMMY((byte) 0x0),
 		CONFIG_1((byte) 0x1),
 		NAV((byte) 0x2),
 		CONFIG_2((byte) 0x3),
@@ -134,7 +136,7 @@ public class YubiKey {
 	}
 
 	public byte[] challengeResponse(final Slot slot, final byte[] challenge) throws UsbException {
-		if(!slot.isChallengeResponseSlot())
+		if (!slot.isChallengeResponseSlot())
 			throw new InvalidSlotException();
 
 		this.write(slot, challenge);
@@ -166,9 +168,11 @@ public class YubiKey {
 			throw new CRC16Exception();
 	}
 
-	private boolean reset() throws UsbException {
-		// TODO: stub
-		return true;
+	private void reset() throws UsbException {
+		final byte[] dummy = new byte[REPORT_TYPE_FEATURE_DATA_SIZE];
+		dummy[REPORT_TYPE_FEATURE_DATA_SIZE - 1] = DUMMY_REPORT;
+
+		this.write(Slot.DUMMY, dummy);
 	}
 
 	private void tryClaim() throws UsbException {
