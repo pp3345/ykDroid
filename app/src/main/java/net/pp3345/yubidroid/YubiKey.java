@@ -24,6 +24,7 @@ public class YubiKey {
 	private static final short STATUS_FLAG_WRITE            = 0x80;
 
 	private static final byte WRITE_PAYLOAD_LENGTH = 64;
+	private static final int CHALLENGE_RESPONSE_LENGTH = 20;
 
 	public enum Type {
 		STANDARD(0x0010, "YubiKey", "Version 1 or 2"),
@@ -103,6 +104,10 @@ public class YubiKey {
 		public byte getAddress() {
 			return this.address;
 		}
+
+		public boolean isChallengeResponseSlot() {
+			return this == CHALLENGE_HMAC_1 || this == CHALLENGE_HMAC_2;
+		}
 	}
 
 	public YubiKey(final UsbDevice device, final UsbDeviceConnection connection) {
@@ -126,6 +131,15 @@ public class YubiKey {
 		final byte[] response = this.readResponse(4, true);
 
 		return (response[0] << 24) + (response[1] << 16) + (response[2] << 8) + (response[3] & 0xff);
+	}
+
+	public byte[] challengeResponse(final Slot slot, final byte[] challenge) throws UsbException {
+		if(!slot.isChallengeResponseSlot())
+			throw new InvalidSlotException();
+
+		this.write(slot, challenge);
+
+		return this.readResponse(CHALLENGE_RESPONSE_LENGTH, true);
 	}
 
 	private char CRC16(final byte[] buffer, final int bytes) {
@@ -218,12 +232,12 @@ public class YubiKey {
 	}
 
 	private byte[] readResponse(final int expectedBytes, final boolean mayBlock) throws UsbException {
-		final byte[] response  = new byte[Math.max(expectedBytes, REPORT_TYPE_FEATURE_DATA_SIZE * 2)];
+		final byte[] response  = new byte[Math.max(REPORT_TYPE_FEATURE_DATA_SIZE * (expectedBytes / REPORT_TYPE_FEATURE_DATA_SIZE + 1), REPORT_TYPE_FEATURE_DATA_SIZE * 8)];
 		int          bytesRead = REPORT_TYPE_FEATURE_DATA_SIZE - 1;
 
 		System.arraycopy(this.waitForStatus(mayBlock, STATUS_FLAG_RESPONSE_PENDING, StatusMode.SET), 0, response, 0, REPORT_TYPE_FEATURE_DATA_SIZE - 1);
 
-		while (bytesRead + REPORT_TYPE_FEATURE_DATA_SIZE <= expectedBytes || bytesRead < 2 * REPORT_TYPE_FEATURE_DATA_SIZE - 2 || expectedBytes == 0) {
+		while (bytesRead + REPORT_TYPE_FEATURE_DATA_SIZE <= response.length || expectedBytes == 0) {
 			final byte[] data = new byte[REPORT_TYPE_FEATURE_DATA_SIZE];
 
 			this.tryClaim();
@@ -254,7 +268,7 @@ public class YubiKey {
 					return response;
 				}
 
-				System.arraycopy(data, 0, response, bytesRead, Math.min(REPORT_TYPE_FEATURE_DATA_SIZE - 1, expectedBytes - bytesRead));
+				System.arraycopy(data, 0, response, bytesRead, REPORT_TYPE_FEATURE_DATA_SIZE - 1);
 				bytesRead += REPORT_TYPE_FEATURE_DATA_SIZE - 1;
 			} else {
 				this.reset();

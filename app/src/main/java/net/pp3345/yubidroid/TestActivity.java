@@ -9,7 +9,9 @@ import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 public class TestActivity extends Activity {
@@ -59,11 +61,21 @@ public class TestActivity extends Activity {
 			this.yubiKey = new YubiKey(device, this.usbManager.openDevice(device));
 			this.output.append("Connected to " + this.yubiKey.getType().getName() + " (" + this.yubiKey.getType().getVersion() + ")\n");
 			try {
-				this.output.append("Serial number: " + this.yubiKey.getSerialNumber());
+				this.output.append("Serial number: " + this.yubiKey.getSerialNumber() + "\n");
 			} catch (final UsbException e) {
 				this.output.append("UsbException! :( " + e.getMessage());
 				Log.e("YubiDroid", "UsbException", e);
 			}
+		}
+	}
+
+	public void doChallengeResponse(final View button) {
+		this.output.append("Sending challenge...\n");
+		try {
+			this.output.append("Response: " + Base64.encodeToString(this.yubiKey.challengeResponse(YubiKey.Slot.CHALLENGE_HMAC_2, Base64.decode("BiLm5axhbddP/87/CemK6xEkF5qQ+ij1h9T82FHg98JTWAhBDUVFDRXTl/KzlAxXRF7yyrWCsQ4GGY6oFySeNA==", Base64.DEFAULT)), Base64.DEFAULT) + "\n");
+		} catch (final UsbException e) {
+			this.output.append("UsbException! :( " + e.getMessage());
+			Log.e("YubiDroid", "UsbException", e);
 		}
 	}
 }
