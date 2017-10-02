@@ -28,19 +28,23 @@ class UsbPermissionHandler extends BroadcastReceiver {
 
 		this.receiver = receiver;
 		this.context.registerReceiver(this, new IntentFilter(ACTION_USB_PERMISSION_REQUEST));
+		this.context.registerReceiver(this, new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED));
 
 		assert usbManager != null;
-		for (final UsbDevice device : usbManager.getDeviceList().values()) {
-			if (device.getVendorId() == YubiKey.YUBICO_USB_VENDOR_ID) {
-				usbManager.requestPermission(device, PendingIntent.getBroadcast(this.context, 0, new Intent(ACTION_USB_PERMISSION_REQUEST), 0));
-			}
-		}
+		for (final UsbDevice device : usbManager.getDeviceList().values())
+			this.requestPermission(device);
 	}
 
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
+		this.requestPermission((UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE));
+	}
+
+	private void requestPermission(final UsbDevice device) {
 		final UsbManager usbManager = (UsbManager) this.context.getSystemService(Context.USB_SERVICE);
-		final UsbDevice  device     = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+
+		if(device.getVendorId() != YubiKey.YUBICO_USB_VENDOR_ID)
+			return;
 
 		assert usbManager != null;
 		if (usbManager.hasPermission(device)) {
