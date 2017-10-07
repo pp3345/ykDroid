@@ -17,7 +17,11 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".ChallengeResponseActivity" android:exported="true">
+        <activity
+            android:name=".ChallengeResponseActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.MinWidth"
+            android:configChanges="keyboard|screenSize|screenLayout|touchscreen|locale|keyboardHidden|navigation">
             <intent-filter>
                 <action android:name="net.pp3345.yubidroid.intent.action.CHALLENGE_RESPONSE" />
                 <category android:name="android.intent.category.DEFAULT" />
