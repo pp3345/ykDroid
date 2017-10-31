@@ -14,6 +14,7 @@ class UsbPermissionHandler extends BroadcastReceiver {
 
 	private static final String ACTION_USB_PERMISSION_REQUEST = "net.pp3345.yubidroid.intent.action.USB_PERMISSION_REQUEST";
 	private YubiKeyUsbConnectReceiver connectReceiver;
+	private YubiKeyUsbUnplugReceiver  unplugReceiver;
 
 	interface YubiKeyUsbConnectReceiver {
 		void onYubiKeyConnected(UsbDevice device, UsbDeviceConnection connection);
@@ -45,6 +46,7 @@ class UsbPermissionHandler extends BroadcastReceiver {
 		assert usbManager != null;
 
 		HaveKeyPlugged:
+		//noinspection LoopStatementThatDoesntLoop
 		do {
 			for (final UsbDevice device : usbManager.getDeviceList().values()) {
 				if (device.getVendorId() == YubiKey.YUBICO_USB_VENDOR_ID)
@@ -56,20 +58,31 @@ class UsbPermissionHandler extends BroadcastReceiver {
 			return;
 		} while (false);
 
-		this.context.registerReceiver(new BroadcastReceiver() {
-			@Override
-			public void onReceive(final Context context, final Intent intent) {
-				if (((UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)).getVendorId() == YubiKey.YUBICO_USB_VENDOR_ID) {
-					UsbPermissionHandler.this.context.unregisterReceiver(this);
-					receiver.onYubiKeyUnplugged();
-				}
-			}
-		}, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
+		this.unplugReceiver = receiver;
+		this.context.registerReceiver(this, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
 	}
 
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
-		this.requestPermission((UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE));
+		assert intent.getAction() != null;
+		switch (intent.getAction()) {
+			case ACTION_USB_PERMISSION_REQUEST:
+			case UsbManager.ACTION_USB_DEVICE_ATTACHED:
+				this.requestPermission((UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE));
+				break;
+			case UsbManager.ACTION_USB_DEVICE_DETACHED:
+				if (((UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)).getVendorId() == YubiKey.YUBICO_USB_VENDOR_ID) {
+					this.context.unregisterReceiver(this);
+					this.unplugReceiver.onYubiKeyUnplugged();
+					this.unplugReceiver = null;
+				}
+				break;
+		}
+	}
+
+	public void stop() {
+		if (this.connectReceiver != null || this.unplugReceiver != null)
+			this.context.unregisterReceiver(this);
 	}
 
 	private void requestPermission(final UsbDevice device) {
@@ -83,6 +96,7 @@ class UsbPermissionHandler extends BroadcastReceiver {
 			this.context.unregisterReceiver(this);
 
 			this.connectReceiver.onYubiKeyConnected(device, usbManager.openDevice(device));
+			this.connectReceiver = null;
 		} else {
 			usbManager.requestPermission(device, PendingIntent.getBroadcast(this.context, 0, new Intent(ACTION_USB_PERMISSION_REQUEST), 0));
 		}

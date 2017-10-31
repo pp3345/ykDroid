@@ -73,4 +73,11 @@ public class ChallengeResponseActivity extends Activity implements UsbPermission
 	public void onYubiKeyUnplugged() {
 		this.recreate();
 	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+
+		this.usbPermissionHandler.stop();
+	}
 }
