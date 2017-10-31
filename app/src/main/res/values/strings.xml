@@ -3,4 +3,8 @@
     <string name="attach_yubikey">Please attach your YubiKey now.</string>
     <string name="press_button">Please press the button on your YubiKey.</string>
     <string name="unplug_yubikey">An error has occurred. Please unplug your YubiKey.</string>
+    <string-array name="slots">
+        <item>Slot 1</item>
+        <item>Slot 2</item>
+    </string-array>
 </resources>
