@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
-public class ChallengeResponseActivity extends Activity implements UsbPermissionHandler.YubiKeyUsbConnectReceiver, UsbPermissionHandler.YubiKeyUsbUnplugReceiver {
-	private final UsbPermissionHandler usbPermissionHandler = new UsbPermissionHandler(this);
+public class ChallengeResponseActivity extends Activity implements UsbConnectionManager.YubiKeyUsbConnectReceiver, UsbConnectionManager.YubiKeyUsbUnplugReceiver {
+	private final UsbConnectionManager usbConnectionManager = new UsbConnectionManager(this);
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -22,7 +22,7 @@ public class ChallengeResponseActivity extends Activity implements UsbPermission
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.setContentView(R.layout.activity_challenge_response);
 
-		this.usbPermissionHandler.waitForYubiKey(this);
+		this.usbConnectionManager.waitForYubiKey(this);
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class ChallengeResponseActivity extends Activity implements UsbPermission
 				} else {
 					Log.e("YubiDroid", "Error during challenge-response request", this.executionException);
 
-					ChallengeResponseActivity.this.usbPermissionHandler.waitForYubiKeyUnplug(ChallengeResponseActivity.this);
+					ChallengeResponseActivity.this.usbConnectionManager.waitForYubiKeyUnplug(ChallengeResponseActivity.this);
 
 					ChallengeResponseActivity.this.findViewById(R.id.waiting).setVisibility(View.GONE);
 					ChallengeResponseActivity.this.findViewById(R.id.failure).setVisibility(View.VISIBLE);
@@ -78,6 +78,6 @@ public class ChallengeResponseActivity extends Activity implements UsbPermission
 	protected void onStop() {
 		super.onStop();
 
-		this.usbPermissionHandler.stop();
+		this.usbConnectionManager.stop();
 	}
 }

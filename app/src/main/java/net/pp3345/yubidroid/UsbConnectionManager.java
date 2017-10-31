@@ -9,7 +9,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 
-class UsbPermissionHandler extends BroadcastReceiver {
+class UsbConnectionManager extends BroadcastReceiver {
 	private final Context context;
 
 	private static final String ACTION_USB_PERMISSION_REQUEST = "net.pp3345.yubidroid.intent.action.USB_PERMISSION_REQUEST";
@@ -24,7 +24,7 @@ class UsbPermissionHandler extends BroadcastReceiver {
 		void onYubiKeyUnplugged();
 	}
 
-	UsbPermissionHandler(final Context context) {
+	UsbConnectionManager(final Context context) {
 		this.context = context;
 	}
 
