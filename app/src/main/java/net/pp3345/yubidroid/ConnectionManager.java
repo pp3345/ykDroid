@@ -20,6 +20,7 @@ import net.pp3345.yubidroid.yubikey.UsbYubiKey;
 
 class ConnectionManager extends BroadcastReceiver implements Application.ActivityLifecycleCallbacks {
 	private final Activity activity;
+	private       boolean  isActivityResumed;
 
 	private static final String ACTION_USB_PERMISSION_REQUEST = "net.pp3345.yubidroid.intent.action.USB_PERMISSION_REQUEST";
 
@@ -78,6 +79,7 @@ class ConnectionManager extends BroadcastReceiver implements Application.Activit
 		                                                                     PendingIntent.getActivity(this.activity, -1, new Intent(this.activity, this.activity.getClass()), 0),
 		                                                                     new IntentFilter[]{filter},
 		                                                                     null);
+		this.isActivityResumed = true;
 	}
 
 	public void waitForYubiKeyUnplug(final YubiKeyUsbUnplugReceiver receiver) {
@@ -144,6 +146,8 @@ class ConnectionManager extends BroadcastReceiver implements Application.Activit
 	public void onActivityPaused(final Activity activity) {
 		if (this.connectReceiver != null && (this.getSupportedConnectionMethods() & CONNECTION_METHOD_NFC) != 0)
 			NfcAdapter.getDefaultAdapter(this.activity).disableForegroundDispatch(this.activity);
+
+		this.isActivityResumed = false;
 	}
 
 	@Override
@@ -162,7 +166,7 @@ class ConnectionManager extends BroadcastReceiver implements Application.Activit
 		if (usbManager.hasPermission(device)) {
 			this.activity.unregisterReceiver(this);
 
-			if ((this.getSupportedConnectionMethods() & CONNECTION_METHOD_NFC) != 0)
+			if ((this.getSupportedConnectionMethods() & CONNECTION_METHOD_NFC) != 0 && this.isActivityResumed)
 				NfcAdapter.getDefaultAdapter(this.activity).disableForegroundDispatch(this.activity);
 
 			this.connectReceiver.onYubiKeyConnected(new UsbYubiKey(device, usbManager.openDevice(device)));
