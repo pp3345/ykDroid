@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">YubiDroid</string>
+    <string name="attach_yubikey">Bitte stecke jetzt deinen YubiKey ein.</string>
+    <string name="attach_or_swipe_yubikey">Bitte stecke jetzt deinen YubiKey ein oder lege ihn auf.</string>
+    <string name="swipe_yubikey">Bite lege jetzt deinen YubiKey auf.</string>
+    <string name="no_supported_connection_method">Dein Gerät unterstützt weder den USB Host Mode, noch NFC. YubiKeys können daher nicht benutzt werden.</string>
+    <string name="press_button">Bitte berühre den Knopf deines YubiKeys.</string>
+    <string name="unplug_yubikey">Ein Fehler ist aufgetreten. Bitte ziehe deinen YubiKey ab.</string>
+    <string-array name="slots">
+        <item>Slot 1</item>
+        <item>Slot 2</item>
+    </string-array>
+</resources>
