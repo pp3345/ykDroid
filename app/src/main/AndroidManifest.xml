@@ -2,6 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.pp3345.yubidroid">
 
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.NFC" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,6 +21,7 @@
 
         <activity
             android:name=".ChallengeResponseActivity"
+            android:launchMode="singleTop"
             android:exported="true"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.MinWidth"
             android:configChanges="keyboard|screenSize|screenLayout|touchscreen|locale|keyboardHidden|navigation">

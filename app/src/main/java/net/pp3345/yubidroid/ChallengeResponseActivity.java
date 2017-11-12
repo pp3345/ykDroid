@@ -3,8 +3,6 @@ package net.pp3345.yubidroid;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbDeviceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,28 +12,46 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class ChallengeResponseActivity extends Activity implements UsbConnectionManager.YubiKeyUsbConnectReceiver, UsbConnectionManager.YubiKeyUsbUnplugReceiver, AdapterView.OnItemSelectedListener {
-	private final UsbConnectionManager usbConnectionManager = new UsbConnectionManager(this);
-	private YubiKey.Slot selectedSlot = YubiKey.Slot.CHALLENGE_HMAC_2;
+import net.pp3345.yubidroid.yubikey.Slot;
+
+public class ChallengeResponseActivity extends Activity implements ConnectionManager.YubiKeyConnectReceiver, ConnectionManager.YubiKeyUsbUnplugReceiver, AdapterView.OnItemSelectedListener {
+	private ConnectionManager connectionManager;
+	private Slot selectedSlot = Slot.CHALLENGE_HMAC_2;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		this.connectionManager = new ConnectionManager(this);
+
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.setContentView(R.layout.activity_challenge_response);
+
+		switch (this.connectionManager.getSupportedConnectionMethods()) {
+			case ConnectionManager.CONNECTION_METHOD_USB | ConnectionManager.CONNECTION_METHOD_NFC:
+				((TextView) this.findViewById(R.id.info)).setText(R.string.attach_or_swipe_yubikey);
+				break;
+			case ConnectionManager.CONNECTION_METHOD_USB:
+				((TextView) this.findViewById(R.id.info)).setText(R.string.attach_yubikey);
+				break;
+			case ConnectionManager.CONNECTION_METHOD_NFC:
+				((TextView) this.findViewById(R.id.info)).setText(R.string.swipe_yubikey);
+				break;
+			default:
+				((TextView) this.findViewById(R.id.info)).setText(R.string.no_supported_connection_method);
+				this.showError();
+				return;
+		}
 
 		final Spinner slotSelection = this.findViewById(R.id.slotSelection);
 		slotSelection.setSelection(1);
 		slotSelection.setOnItemSelectedListener(this);
 
-		this.usbConnectionManager.waitForYubiKey(this);
+		this.connectionManager.waitForYubiKey(this);
 	}
 
 	@Override
-	public void onYubiKeyConnected(final UsbDevice device, final UsbDeviceConnection connection) {
-		final YubiKey yubiKey = new YubiKey(device, connection);
-
+	public void onYubiKeyConnected(final YubiKey yubiKey) {
 		((TextView) this.findViewById(R.id.info)).setText(R.string.press_button);
 		this.findViewById(R.id.slotSelection).setVisibility(View.GONE);
 
@@ -47,7 +63,7 @@ public class ChallengeResponseActivity extends Activity implements UsbConnection
 			protected byte[] doInBackground(final Void... nothing) {
 				try {
 					return yubiKey.challengeResponse(ChallengeResponseActivity.this.selectedSlot, ChallengeResponseActivity.this.getIntent().getByteArrayExtra("challenge"));
-				} catch (final UsbException e) {
+				} catch (final Exception e) {
 					this.executionException = e;
 					return null;
 				}
@@ -65,14 +81,14 @@ public class ChallengeResponseActivity extends Activity implements UsbConnection
 				} else {
 					Log.e("YubiDroid", "Error during challenge-response request", this.executionException);
 
-					ChallengeResponseActivity.this.usbConnectionManager.waitForYubiKeyUnplug(ChallengeResponseActivity.this);
+					ChallengeResponseActivity.this.connectionManager.waitForYubiKeyUnplug(ChallengeResponseActivity.this);
+					ChallengeResponseActivity.this.showError();
 
-					ChallengeResponseActivity.this.findViewById(R.id.waiting).setVisibility(View.GONE);
-					ChallengeResponseActivity.this.findViewById(R.id.failure).setVisibility(View.VISIBLE);
 					((TextView) ChallengeResponseActivity.this.findViewById(R.id.info)).setText(R.string.unplug_yubikey);
 				}
 			}
 		};
+		this.findViewById(R.id.slotSelection).setVisibility(View.GONE);
 
 		challengeResponseTask.execute();
 	}
@@ -83,20 +99,13 @@ public class ChallengeResponseActivity extends Activity implements UsbConnection
 	}
 
 	@Override
-	protected void onStop() {
-		super.onStop();
-
-		this.usbConnectionManager.stop();
-	}
-
-	@Override
 	public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
 		switch (position) {
 			case 0:
-				this.selectedSlot = YubiKey.Slot.CHALLENGE_HMAC_1;
+				this.selectedSlot = Slot.CHALLENGE_HMAC_1;
 				break;
 			case 1:
-				this.selectedSlot = YubiKey.Slot.CHALLENGE_HMAC_2;
+				this.selectedSlot = Slot.CHALLENGE_HMAC_2;
 				break;
 			default:
 				throw new IllegalStateException();
@@ -106,5 +115,18 @@ public class ChallengeResponseActivity extends Activity implements UsbConnection
 	@Override
 	public void onNothingSelected(final AdapterView<?> parent) {
 		throw new IllegalStateException();
+	}
+
+	private void showError() {
+		this.findViewById(R.id.waiting).setVisibility(View.GONE);
+		this.findViewById(R.id.failure).setVisibility(View.VISIBLE);
+		this.findViewById(R.id.slotSelection).setVisibility(View.GONE);
+	}
+
+	@Override
+	protected void onNewIntent(final Intent intent) {
+		// This is kind of ugly but Android doesn't leave us any other choice
+		this.connectionManager.onReceive(this, intent);
+
 	}
 }
