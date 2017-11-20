@@ -9,13 +9,30 @@ import net.pp3345.yubidroid.apdu.response.ykoath.PutResponseApdu;
 
 import java.io.IOException;
 
+/**
+ * NFC YubiKey driver implementation.
+ */
 public class NfcYubiKey implements YubiKey {
 	private final IsoDep tag;
 
+	/**
+	 * The scheme of the URI passed in the initial NDEF messages sent by YubiKey NEOs.
+	 */
 	public static final  String YUBIKEY_NEO_NDEF_SCHEME = "https";
+	/**
+	 * The host name of the URI passed in the initial NDEF messages sent by YubiKey NEOs.
+	 */
 	public static final  String YUBIKEY_NEO_NDEF_HOST   = "my.yubico.com";
+	/**
+	 * ISO 7816 Application ID for the challenge-response feature of YubiKeys.
+	 */
 	private static final byte[] CHALLENGE_AID           = new byte[]{(byte) 0xa0, 0x00, 0x00, 0x05, 0x27, 0x20, 0x01};
 
+	/**
+	 * Should only be instantiated by the {@link net.pp3345.yubidroid.ConnectionManager}.
+	 *
+	 * @param tag YubiKey NEOs provide the functionality of ISO-DEP (14443-4) tags.
+	 */
 	public NfcYubiKey(final IsoDep tag) {
 		this.tag = tag;
 	}

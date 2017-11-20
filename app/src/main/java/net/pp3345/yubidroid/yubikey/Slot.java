@@ -1,5 +1,8 @@
 package net.pp3345.yubidroid.yubikey;
 
+/**
+ * Enumeration of feature slots available on a YubiKey. (Taken from Yubico's C driver implementation)
+ */
 public enum Slot {
 	DUMMY((byte) 0x0),
 	CONFIG_1((byte) 0x1),
@@ -25,14 +28,29 @@ public enum Slot {
 		this.address = address;
 	}
 
+	/**
+	 * Gets the one-byte address of a slot.
+	 *
+	 * @return Slot address
+	 */
 	public byte getAddress() {
 		return this.address;
 	}
 
+	/**
+	 * Checks whether a slot may be used for challenge-response.
+	 *
+	 * @return true, if a slot may be used for challenge-response.
+	 */
 	public boolean isChallengeResponseSlot() {
 		return this == CHALLENGE_HMAC_1 || this == CHALLENGE_HMAC_2;
 	}
 
+	/**
+	 * Checks whether a slot may be used for challenge-response and throws an exception if not.
+	 *
+	 * @throws InvalidSlotException When a slot may not be used for challenge-response.
+	 */
 	public void ensureChallengeResponseSlot() throws InvalidSlotException {
 		if (!this.isChallengeResponseSlot())
 			throw new InvalidSlotException();

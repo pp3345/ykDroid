@@ -1,5 +1,8 @@
 package net.pp3345.yubidroid.apdu;
 
+/**
+ * ISO 7816-4 5.3.1
+ */
 public abstract class CommandApdu {
 	protected byte[] data;
 

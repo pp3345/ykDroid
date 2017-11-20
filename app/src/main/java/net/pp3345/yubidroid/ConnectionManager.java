@@ -18,26 +18,57 @@ import android.os.Bundle;
 import net.pp3345.yubidroid.yubikey.NfcYubiKey;
 import net.pp3345.yubidroid.yubikey.UsbYubiKey;
 
+/**
+ * Manages the lifecycle of a YubiKey connection via USB or NFC.
+ */
 class ConnectionManager extends BroadcastReceiver implements Application.ActivityLifecycleCallbacks {
 	private final Activity activity;
 	private       boolean  isActivityResumed;
 
 	private static final String ACTION_USB_PERMISSION_REQUEST = "net.pp3345.yubidroid.intent.action.USB_PERMISSION_REQUEST";
 
+	/**
+	 * Flag used to indicate that support for USB host mode is present on the Android device.
+	 */
 	public static final byte CONNECTION_METHOD_USB = 0b1;
+	/**
+	 * Flag used to indicate that support for NFC is present on the Android device.
+	 */
 	public static final byte CONNECTION_METHOD_NFC = 0b10;
 
 	private YubiKeyConnectReceiver   connectReceiver;
 	private YubiKeyUsbUnplugReceiver unplugReceiver;
 
+	/**
+	 * Receiver interface that is called when a YubiKey was connected.
+	 */
 	interface YubiKeyConnectReceiver {
+		/**
+		 * Called when a YubiKey was connected via USB or NFC.
+		 *
+		 * @param yubiKey The YubiKey driver implementation, instantiated with a connection to the
+		 *                YubiKey.
+		 */
 		void onYubiKeyConnected(YubiKey yubiKey);
 	}
 
+	/**
+	 * Receiver interface that is called when a YubiKey connected via USB was unplugged.
+	 */
 	interface YubiKeyUsbUnplugReceiver {
+		/**
+		 * Called when a YubiKey connected via USB was unplugged.
+		 */
 		void onYubiKeyUnplugged();
 	}
 
+	/**
+	 * May only be instantiated as soon as the basic initialization of a new activity is complete
+	 * (usually in {@link Activity#onStart()}).
+	 *
+	 * @param activity As the connection lifecycle depends on the activity lifecycle, an active
+	 *                 {@link Activity} must be passed
+	 */
 	ConnectionManager(final Activity activity) {
 		this.activity = activity;
 		this.activity.getApplication().registerActivityLifecycleCallbacks(this);
@@ -47,6 +78,11 @@ class ConnectionManager extends BroadcastReceiver implements Application.Activit
 	public void onActivityCreated(final Activity activity, final Bundle savedInstanceState) {
 	}
 
+	/**
+	 * Waits for a YubiKey to be connected. Should be called in {@link Activity#onStart()}.
+	 *
+	 * @param receiver The receiver implementation to be called as soon as a YubiKey was connected.
+	 */
 	public void waitForYubiKey(final YubiKeyConnectReceiver receiver) {
 		this.connectReceiver = receiver;
 	}
@@ -82,6 +118,12 @@ class ConnectionManager extends BroadcastReceiver implements Application.Activit
 		this.isActivityResumed = true;
 	}
 
+	/**
+	 * Waits until no YubiKey is connected.
+	 *
+	 * @param receiver The receiver implementation to be called as soon as no YubiKey is connected
+	 *                 anymore.
+	 */
 	public void waitForYubiKeyUnplug(final YubiKeyUsbUnplugReceiver receiver) {
 		if ((this.getSupportedConnectionMethods() & CONNECTION_METHOD_USB) == 0) {
 			receiver.onYubiKeyUnplugged();
@@ -176,6 +218,12 @@ class ConnectionManager extends BroadcastReceiver implements Application.Activit
 		}
 	}
 
+	/**
+	 * Gets the connection methods (USB and/or NFC) that are supported on the Android device.
+	 *
+	 * @return A byte that may or may not have the {@link #CONNECTION_METHOD_USB} and
+	 * {@link #CONNECTION_METHOD_USB} bits set.
+	 */
 	public byte getSupportedConnectionMethods() {
 		final PackageManager packageManager = this.activity.getPackageManager();
 		byte                 result         = 0b0;

@@ -6,10 +6,16 @@ import android.hardware.usb.UsbDeviceConnection;
 
 import net.pp3345.yubidroid.YubiKey;
 
+/**
+ * USB YubiKey driver implementation.
+ */
 public class UsbYubiKey implements YubiKey {
 	private final UsbDeviceConnection connection;
 	private final UsbDevice           device;
 
+	/**
+	 * The USB vendor ID assigned to Yubico.
+	 */
 	@SuppressWarnings("WeakerAccess")
 	public static final  int  YUBICO_USB_VENDOR_ID                = 0x1050;
 	private static final int  YUBIKEY_OPERATION_TIMEOUT_MS        = 2000;
@@ -28,6 +34,9 @@ public class UsbYubiKey implements YubiKey {
 
 	private static final byte WRITE_PAYLOAD_LENGTH = 64;
 
+	/**
+	 * An enumeration of all available YubiKey types. (Taken from Yubico's C driver implementation)
+	 */
 	public enum Type {
 		STANDARD(0x0010, "YubiKey", "Version 1 or 2"),
 
@@ -61,14 +70,29 @@ public class UsbYubiKey implements YubiKey {
 			this.version = version;
 		}
 
+		/**
+		 * Gets the USB product ID of a YubiKey.
+		 *
+		 * @return USB product ID
+		 */
 		public int getProductID() {
 			return this.productID;
 		}
 
+		/**
+		 * Gets the product name of a YubiKey.
+		 *
+		 * @return YubiKey product name
+		 */
 		public String getName() {
 			return this.name;
 		}
 
+		/**
+		 * Gets the variant/version description of a YubiKey.
+		 *
+		 * @return Version description
+		 */
 		public String getVersion() {
 			return this.version;
 		}
@@ -79,11 +103,22 @@ public class UsbYubiKey implements YubiKey {
 		CLEAR;
 	}
 
+	/**
+	 * Should only be instantiated by the {@link net.pp3345.yubidroid.ConnectionManager}.
+	 *
+	 * @param device     UsbDevice instance for the connected YubiKey.
+	 * @param connection UsbConnection instance for the connected YubiKey.
+	 */
 	public UsbYubiKey(final UsbDevice device, final UsbDeviceConnection connection) {
 		this.device = device;
 		this.connection = connection;
 	}
 
+	/**
+	 * Gets the {@link Type} instance corresponding to the connected YubiKey.
+	 *
+	 * @return {@link Type} instance that describes the connected YubiKey
+	 */
 	public Type getType() {
 		for (final Type type : Type.values()) {
 			if (type.getProductID() == this.device.getProductId()) {
@@ -94,6 +129,11 @@ public class UsbYubiKey implements YubiKey {
 		return Type.UNKNOWN;
 	}
 
+	/**
+	 * Gets the serial number of the connected YubiKey.
+	 *
+	 * @return The 32-bit serial number of the connected YubiKey.
+	 */
 	public int getSerialNumber() throws YubiKeyException {
 		this.write(Slot.DEVICE_SERIAL, new byte[REPORT_TYPE_FEATURE_DATA_SIZE * 2]);
 

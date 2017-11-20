@@ -1,5 +1,8 @@
 package net.pp3345.yubidroid.apdu;
 
+/**
+ * ISO 7816-4 5.3.3
+ */
 public class ResponseApdu {
 	protected final byte[] response;
 

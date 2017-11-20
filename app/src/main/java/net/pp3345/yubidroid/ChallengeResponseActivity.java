@@ -14,6 +14,15 @@ import android.widget.TextView;
 
 import net.pp3345.yubidroid.yubikey.Slot;
 
+/**
+ * May be invoked by Android apps using the
+ * <code>"net.pp3345.yubidroid.intent.action.CHALLENGE_RESPONSE"</code> intent to send a challenge
+ * to a YubiKey and receive the response.
+ * <p>
+ * The challenge must be passed in an extra <code>byte[] challenge</code>. Upon successful completion,
+ * the activity returns an extra <code>byte[] response</code> in the result intent.
+ * </p>
+ */
 public class ChallengeResponseActivity extends Activity implements ConnectionManager.YubiKeyConnectReceiver, ConnectionManager.YubiKeyUsbUnplugReceiver, AdapterView.OnItemSelectedListener {
 	private ConnectionManager connectionManager;
 	private Slot selectedSlot = Slot.CHALLENGE_HMAC_2;
