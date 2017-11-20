@@ -142,6 +142,7 @@ public class UsbYubiKey implements YubiKey {
 		return (response[0] << 24) + (response[1] << 16) + (response[2] << 8) + (response[3] & 0xff);
 	}
 
+	@Override
 	public byte[] challengeResponse(final Slot slot, final byte[] challenge) throws YubiKeyException {
 		slot.ensureChallengeResponseSlot();
 		this.write(slot, challenge);
