@@ -1,12 +1,12 @@
 # YubiDroid
 YubiDroid is an Android app that provides an interface for integrating the challenge-response functionality
-of YubiKeys into other apps. It supports both USB and NFC (YubiKey NEO required) communication on compatible devices.
+of YubiKeys into other apps. Both USB and NFC (YubiKey NEO required for NFC) are supported on compatible devices.
 
 ## Integration
 YubiDroid provides an [Intent](https://developer.android.com/reference/android/content/Intent.html) called 
 `net.pp3345.yubidroid.intent.action.CHALLENGE_RESPONSE`, which accepts an extra `byte[] challenge` and returns an extra 
 `byte[] response`.
-Upon invocation, YubiDroid will automatically detect which communication methods (USB and/or NFC) are available and show a dialog 
+Upon invocation, YubiDroid will automatically detect which connection methods (USB and/or NFC) are available and show a dialog 
 overlay with instructions to the user.
 
 Example code:
@@ -33,3 +33,6 @@ PRs welcome! I am open for adding more YubiKey functionality, but bugfixes and a
 
 ## Bugs & issues
 Please use the GitHub issue tracker for reporting bugs and feature requests.
+
+## Notice
+Yubico and YubiKey are registered trademarks of Yubico.
