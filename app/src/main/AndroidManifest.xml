@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.pp3345.yubidroid">
+    package="net.pp3345.ykdroid">
 
     <uses-feature
         android:name="android.hardware.usb.host"
@@ -19,13 +19,13 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".ChallengeResponseActivity"
+            android:name="net.pp3345.ykdroid.ChallengeResponseActivity"
             android:launchMode="singleTop"
             android:exported="true"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.MinWidth"
             android:configChanges="keyboard|screenSize|screenLayout|touchscreen|locale|keyboardHidden|navigation">
             <intent-filter>
-                <action android:name="net.pp3345.yubidroid.intent.action.CHALLENGE_RESPONSE" />
+                <action android:name="net.pp3345.ykdroid.intent.action.CHALLENGE_RESPONSE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

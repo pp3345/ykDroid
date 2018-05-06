@@ -1,8 +1,8 @@
-package net.pp3345.yubidroid;
+package net.pp3345.ykdroid;
 
-import net.pp3345.yubidroid.yubikey.InvalidSlotException;
-import net.pp3345.yubidroid.yubikey.Slot;
-import net.pp3345.yubidroid.yubikey.YubiKeyException;
+import net.pp3345.ykdroid.yubikey.InvalidSlotException;
+import net.pp3345.ykdroid.yubikey.Slot;
+import net.pp3345.ykdroid.yubikey.YubiKeyException;
 
 /**
  * Interface that defines the YubiKey features that must be supported by the different driver

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">YubiDroid</string>
+    <string name="app_name">ykDroid</string>
     <string name="attach_yubikey">Bitte stecke jetzt deinen YubiKey ein.</string>
     <string name="attach_or_swipe_yubikey">Bitte stecke jetzt deinen YubiKey ein oder lege ihn auf.</string>
     <string name="swipe_yubikey">Bite lege jetzt deinen YubiKey auf.</string>

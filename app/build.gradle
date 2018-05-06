@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
     defaultConfig {
-        applicationId "net.pp3345.yubidroid"
+        applicationId "net.pp3345.ykdroid"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1

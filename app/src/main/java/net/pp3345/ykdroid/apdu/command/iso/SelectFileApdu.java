@@ -1,6 +1,6 @@
-package net.pp3345.yubidroid.apdu.command.iso;
+package net.pp3345.ykdroid.apdu.command.iso;
 
-import net.pp3345.yubidroid.apdu.CommandApdu;
+import net.pp3345.ykdroid.apdu.CommandApdu;
 
 /**
  * ISO 7816-4 6.11.3

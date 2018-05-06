@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">YubiDroid</string>
+    <string name="app_name">ykDroid</string>
     <string name="attach_yubikey">Please attach your YubiKey now.</string>
     <string name="attach_or_swipe_yubikey">Please attach or swipe your YubiKey now.</string>
     <string name="swipe_yubikey">Please swipe your YubiKey now.</string>

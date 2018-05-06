@@ -1,11 +1,11 @@
-package net.pp3345.yubidroid.yubikey;
+package net.pp3345.ykdroid.yubikey;
 
 import android.nfc.tech.IsoDep;
 
-import net.pp3345.yubidroid.YubiKey;
-import net.pp3345.yubidroid.apdu.command.iso.SelectFileApdu;
-import net.pp3345.yubidroid.apdu.command.ykoath.PutApdu;
-import net.pp3345.yubidroid.apdu.response.ykoath.PutResponseApdu;
+import net.pp3345.ykdroid.YubiKey;
+import net.pp3345.ykdroid.apdu.command.iso.SelectFileApdu;
+import net.pp3345.ykdroid.apdu.command.ykoath.PutApdu;
+import net.pp3345.ykdroid.apdu.response.ykoath.PutResponseApdu;
 
 import java.io.IOException;
 
@@ -29,7 +29,7 @@ public class NfcYubiKey implements YubiKey {
 	private static final byte[] CHALLENGE_AID           = new byte[]{(byte) 0xa0, 0x00, 0x00, 0x05, 0x27, 0x20, 0x01};
 
 	/**
-	 * Should only be instantiated by the {@link net.pp3345.yubidroid.ConnectionManager}.
+	 * Should only be instantiated by the {@link net.pp3345.ykdroid.ConnectionManager}.
 	 *
 	 * @param tag YubiKey NEOs provide the functionality of ISO-DEP (14443-4) tags.
 	 */

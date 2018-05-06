@@ -1,4 +1,4 @@
-package net.pp3345.yubidroid;
+package net.pp3345.ykdroid;
 
 import android.app.Activity;
 import android.app.Application;
@@ -15,8 +15,8 @@ import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.os.Bundle;
 
-import net.pp3345.yubidroid.yubikey.NfcYubiKey;
-import net.pp3345.yubidroid.yubikey.UsbYubiKey;
+import net.pp3345.ykdroid.yubikey.NfcYubiKey;
+import net.pp3345.ykdroid.yubikey.UsbYubiKey;
 
 /**
  * Manages the lifecycle of a YubiKey connection via USB or NFC.
@@ -25,7 +25,7 @@ class ConnectionManager extends BroadcastReceiver implements Application.Activit
 	private final Activity activity;
 	private       boolean  isActivityResumed;
 
-	private static final String ACTION_USB_PERMISSION_REQUEST = "net.pp3345.yubidroid.intent.action.USB_PERMISSION_REQUEST";
+	private static final String ACTION_USB_PERMISSION_REQUEST = "net.pp3345.ykdroid.intent.action.USB_PERMISSION_REQUEST";
 
 	/**
 	 * Flag used to indicate that support for USB host mode is present on the Android device.

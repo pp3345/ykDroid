@@ -1,4 +1,4 @@
-package net.pp3345.yubidroid.yubikey;
+package net.pp3345.ykdroid.yubikey;
 
 /**
  * Thrown when the connection to a YubiKey was lost during a NFC operation.

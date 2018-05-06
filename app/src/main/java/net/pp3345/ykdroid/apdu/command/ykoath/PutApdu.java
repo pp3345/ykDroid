@@ -1,8 +1,8 @@
-package net.pp3345.yubidroid.apdu.command.ykoath;
+package net.pp3345.ykdroid.apdu.command.ykoath;
 
-import net.pp3345.yubidroid.apdu.CommandApdu;
-import net.pp3345.yubidroid.apdu.response.ykoath.PutResponseApdu;
-import net.pp3345.yubidroid.yubikey.Slot;
+import net.pp3345.ykdroid.apdu.CommandApdu;
+import net.pp3345.ykdroid.apdu.response.ykoath.PutResponseApdu;
+import net.pp3345.ykdroid.yubikey.Slot;
 
 /**
  * https://developers.yubico.com/OATH/YKOATH_Protocol.html

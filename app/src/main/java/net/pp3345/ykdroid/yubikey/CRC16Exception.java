@@ -1,4 +1,4 @@
-package net.pp3345.yubidroid.yubikey;
+package net.pp3345.ykdroid.yubikey;
 
 /**
  * Thrown when a YubiKey response fails the CRC16 check.

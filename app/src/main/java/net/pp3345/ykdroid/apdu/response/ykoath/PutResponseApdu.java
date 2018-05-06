@@ -1,7 +1,7 @@
-package net.pp3345.yubidroid.apdu.response.ykoath;
+package net.pp3345.ykdroid.apdu.response.ykoath;
 
-import net.pp3345.yubidroid.YubiKey;
-import net.pp3345.yubidroid.apdu.ResponseApdu;
+import net.pp3345.ykdroid.YubiKey;
+import net.pp3345.ykdroid.apdu.ResponseApdu;
 
 public class PutResponseApdu extends ResponseApdu {
 	public PutResponseApdu(final byte[] response) {

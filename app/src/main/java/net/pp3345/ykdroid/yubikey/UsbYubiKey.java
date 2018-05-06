@@ -1,10 +1,10 @@
-package net.pp3345.yubidroid.yubikey;
+package net.pp3345.ykdroid.yubikey;
 
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
-import net.pp3345.yubidroid.YubiKey;
+import net.pp3345.ykdroid.YubiKey;
 
 /**
  * USB YubiKey driver implementation.
@@ -104,7 +104,7 @@ public class UsbYubiKey implements YubiKey {
 	}
 
 	/**
-	 * Should only be instantiated by the {@link net.pp3345.yubidroid.ConnectionManager}.
+	 * Should only be instantiated by the {@link net.pp3345.ykdroid.ConnectionManager}.
 	 *
 	 * @param device     UsbDevice instance for the connected YubiKey.
 	 * @param connection UsbConnection instance for the connected YubiKey.

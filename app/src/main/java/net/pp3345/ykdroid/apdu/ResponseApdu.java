@@ -1,4 +1,4 @@
-package net.pp3345.yubidroid.apdu;
+package net.pp3345.ykdroid.apdu;
 
 /**
  * ISO 7816-4 5.3.3

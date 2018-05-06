@@ -1,4 +1,4 @@
-package net.pp3345.yubidroid.yubikey;
+package net.pp3345.ykdroid.yubikey;
 
 public class YubiKeyException extends Exception {
 	public YubiKeyException() {

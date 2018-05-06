@@ -1,4 +1,4 @@
-package net.pp3345.yubidroid;
+package net.pp3345.ykdroid;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -12,11 +12,11 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import net.pp3345.yubidroid.yubikey.Slot;
+import net.pp3345.ykdroid.yubikey.Slot;
 
 /**
  * May be invoked by Android apps using the
- * <code>"net.pp3345.yubidroid.intent.action.CHALLENGE_RESPONSE"</code> intent to send a challenge
+ * <code>"net.pp3345.ykdroid.intent.action.CHALLENGE_RESPONSE"</code> intent to send a challenge
  * to a YubiKey and receive the response.
  * <p>
  * The challenge must be passed in an extra <code>byte[] challenge</code>. Upon successful completion,
@@ -88,7 +88,7 @@ public class ChallengeResponseActivity extends Activity implements ConnectionMan
 					ChallengeResponseActivity.this.setResult(RESULT_OK, result);
 					ChallengeResponseActivity.this.finish();
 				} else {
-					Log.e("YubiDroid", "Error during challenge-response request", this.executionException);
+					Log.e("ykDroid", "Error during challenge-response request", this.executionException);
 
 					ChallengeResponseActivity.this.connectionManager.waitForYubiKeyUnplug(ChallengeResponseActivity.this);
 					ChallengeResponseActivity.this.showError();

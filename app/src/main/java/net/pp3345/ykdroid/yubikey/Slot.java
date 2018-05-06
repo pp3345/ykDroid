@@ -1,4 +1,4 @@
-package net.pp3345.yubidroid.yubikey;
+package net.pp3345.ykdroid.yubikey;
 
 /**
  * Enumeration of feature slots available on a YubiKey. (Taken from Yubico's C driver implementation)
