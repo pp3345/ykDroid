@@ -130,25 +130,26 @@ class ConnectionManager extends BroadcastReceiver implements Application.Activit
 			return;
 		}
 
+		if (!this.isYubiKeyPlugged()) {
+			receiver.onYubiKeyUnplugged();
+			return;
+		}
+
+		this.unplugReceiver = receiver;
+		this.activity.registerReceiver(this, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
+	}
+
+	private boolean isYubiKeyPlugged() {
 		final UsbManager usbManager = (UsbManager) this.activity.getSystemService(Context.USB_SERVICE);
 
 		assert usbManager != null;
 
-		HaveKeyPlugged:
-		//noinspection LoopStatementThatDoesntLoop
-		do {
-			for (final UsbDevice device : usbManager.getDeviceList().values()) {
-				if (device.getVendorId() == UsbYubiKey.YUBICO_USB_VENDOR_ID)
-					break HaveKeyPlugged;
-			}
+		for (final UsbDevice device : usbManager.getDeviceList().values()) {
+			if (device.getVendorId() == UsbYubiKey.YUBICO_USB_VENDOR_ID)
+				return true;
+		}
 
-			// No YubiKey is currently connected
-			receiver.onYubiKeyUnplugged();
-			return;
-		} while (false);
-
-		this.unplugReceiver = receiver;
-		this.activity.registerReceiver(this, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
+		return false;
 	}
 
 	@Override
@@ -157,6 +158,8 @@ class ConnectionManager extends BroadcastReceiver implements Application.Activit
 
 		switch (intent.getAction()) {
 			case ACTION_USB_PERMISSION_REQUEST:
+				if(!this.isYubiKeyPlugged()) // Do not keep asking for permission to access a YubiKey that was unplugged already
+					break;
 			case UsbManager.ACTION_USB_DEVICE_ATTACHED:
 				this.requestPermission((UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE));
 				break;
