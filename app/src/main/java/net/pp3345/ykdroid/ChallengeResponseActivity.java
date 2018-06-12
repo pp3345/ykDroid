@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import net.pp3345.ykdroid.yubikey.Slot;
+import net.pp3345.ykdroid.yubikey.UsbYubiKey;
 
 /**
  * May be invoked by Android apps using the
@@ -61,7 +62,8 @@ public class ChallengeResponseActivity extends Activity implements ConnectionMan
 
 	@Override
 	public void onYubiKeyConnected(final YubiKey yubiKey) {
-		((TextView) this.findViewById(R.id.info)).setText(R.string.press_button);
+		if (yubiKey instanceof UsbYubiKey)
+			((TextView) this.findViewById(R.id.info)).setText(R.string.press_button);
 		this.findViewById(R.id.slotSelection).setVisibility(View.GONE);
 
 		@SuppressLint("StaticFieldLeak") // Leaks can't occur as the task will eventually timeout
