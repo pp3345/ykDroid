@@ -135,9 +135,16 @@ public class UsbYubiKey implements YubiKey {
 	 * @return The 32-bit serial number of the connected YubiKey.
 	 */
 	public int getSerialNumber() throws YubiKeyException {
-		this.write(Slot.DEVICE_SERIAL, new byte[REPORT_TYPE_FEATURE_DATA_SIZE * 2]);
+		this.tryClaim();
 
-		final byte[] response = this.readResponse(4, true);
+		final byte[] response;
+		try {
+			this.write(Slot.DEVICE_SERIAL, new byte[REPORT_TYPE_FEATURE_DATA_SIZE * 2]);
+
+			response = this.readResponse(4, true);
+		} finally {
+			this.release();
+		}
 
 		return (response[0] << 24) + (response[1] << 16) + (response[2] << 8) + (response[3] & 0xff);
 	}
@@ -145,9 +152,15 @@ public class UsbYubiKey implements YubiKey {
 	@Override
 	public byte[] challengeResponse(final Slot slot, final byte[] challenge) throws YubiKeyException {
 		slot.ensureChallengeResponseSlot();
-		this.write(slot, challenge);
 
-		return this.readResponse(CHALLENGE_RESPONSE_LENGTH, true);
+		this.tryClaim();
+		try {
+			this.write(slot, challenge);
+
+			return this.readResponse(CHALLENGE_RESPONSE_LENGTH, true);
+		} finally {
+			this.release();
+		}
 	}
 
 	private char CRC16(final byte[] buffer, final int bytes) {
@@ -178,12 +191,17 @@ public class UsbYubiKey implements YubiKey {
 		final byte[] dummy = new byte[REPORT_TYPE_FEATURE_DATA_SIZE];
 		dummy[REPORT_TYPE_FEATURE_DATA_SIZE - 1] = DUMMY_REPORT;
 
+		// this requires that the YubiKey was already claimed
 		this.write(Slot.DUMMY, dummy);
 	}
 
 	private void tryClaim() throws YubiKeyException {
 		if (!this.connection.claimInterface(this.device.getInterface(0), true)) // We need to detach the kernel driver from the device to get exclusive access
 			throw new YubiKeyException("Failed to claim interface");
+	}
+
+	private void release() {
+		this.connection.releaseInterface(this.device.getInterface(0)); // We probably don't really need to care about errors here
 	}
 
 	private byte[] waitForStatus(final boolean mayBlock, final short mask, final StatusMode mode) throws YubiKeyException {
@@ -199,15 +217,10 @@ public class UsbYubiKey implements YubiKey {
 
 			waitInterval *= 2;
 
-			this.tryClaim();
-			try {
-				final int bytes = this.connection.controlTransfer(UsbConstants.USB_TYPE_CLASS | UsbConstants.USB_DIR_IN | 0x1, HID_GET_REPORT, REPORT_TYPE_FEATURE, 0, data, REPORT_TYPE_FEATURE_DATA_SIZE, YUBIKEY_OPERATION_TIMEOUT_MS);
+			final int bytes = this.connection.controlTransfer(UsbConstants.USB_TYPE_CLASS | UsbConstants.USB_DIR_IN | 0x1, HID_GET_REPORT, REPORT_TYPE_FEATURE, 0, data, REPORT_TYPE_FEATURE_DATA_SIZE, YUBIKEY_OPERATION_TIMEOUT_MS);
 
-				if (bytes != REPORT_TYPE_FEATURE_DATA_SIZE)
-					throw new YubiKeyException("controlTransfer failed: " + bytes);
-			} finally {
-				this.connection.releaseInterface(this.device.getInterface(0));
-			}
+			if (bytes != REPORT_TYPE_FEATURE_DATA_SIZE)
+				throw new YubiKeyException("controlTransfer failed: " + bytes);
 
 			switch (mode) {
 				case SET:
@@ -250,23 +263,16 @@ public class UsbYubiKey implements YubiKey {
 		while (bytesRead + REPORT_TYPE_FEATURE_DATA_SIZE <= response.length || expectedBytes == 0) {
 			final byte[] data = new byte[REPORT_TYPE_FEATURE_DATA_SIZE];
 
-			this.tryClaim();
-			try {
-				final int bytes = this.connection.controlTransfer(UsbConstants.USB_TYPE_CLASS | UsbConstants.USB_DIR_IN | 0x1, HID_GET_REPORT, REPORT_TYPE_FEATURE, 0, data, REPORT_TYPE_FEATURE_DATA_SIZE, YUBIKEY_OPERATION_TIMEOUT_MS);
+			final int bytes = this.connection.controlTransfer(UsbConstants.USB_TYPE_CLASS | UsbConstants.USB_DIR_IN | 0x1, HID_GET_REPORT, REPORT_TYPE_FEATURE, 0, data, REPORT_TYPE_FEATURE_DATA_SIZE, YUBIKEY_OPERATION_TIMEOUT_MS);
 
-				if (bytes != REPORT_TYPE_FEATURE_DATA_SIZE)
-					throw new YubiKeyException("controlTransfer failed: " + bytes);
-			} finally {
-				this.connection.releaseInterface(this.device.getInterface(0));
-			}
+			if (bytes != REPORT_TYPE_FEATURE_DATA_SIZE)
+				throw new YubiKeyException("controlTransfer failed: " + bytes);
 
 			if ((data[REPORT_TYPE_FEATURE_DATA_SIZE - 1] & STATUS_FLAG_RESPONSE_PENDING) == STATUS_FLAG_RESPONSE_PENDING) {
 				if ((data[REPORT_TYPE_FEATURE_DATA_SIZE - 1] & 0b11111) == 0) {
 					if (expectedBytes > 0) {
 						this.verifyCRC16(response, expectedBytes + 2);
 					}
-
-					this.reset();
 
 					if (response.length > expectedBytes) {
 						final byte[] result = new byte[expectedBytes];
@@ -327,16 +333,11 @@ public class UsbYubiKey implements YubiKey {
 
 			this.waitForStatus(false, STATUS_FLAG_WRITE, StatusMode.CLEAR);
 
-			this.tryClaim();
-			try {
-				//noinspection PointlessBitwiseExpression
-				final int bytes = this.connection.controlTransfer(UsbConstants.USB_TYPE_CLASS | UsbConstants.USB_DIR_OUT | 0x1, HID_SET_REPORT, REPORT_TYPE_FEATURE, 0, sequenceData, REPORT_TYPE_FEATURE_DATA_SIZE, YUBIKEY_OPERATION_TIMEOUT_MS);
+			//noinspection PointlessBitwiseExpression
+			final int bytes = this.connection.controlTransfer(UsbConstants.USB_TYPE_CLASS | UsbConstants.USB_DIR_OUT | 0x1, HID_SET_REPORT, REPORT_TYPE_FEATURE, 0, sequenceData, REPORT_TYPE_FEATURE_DATA_SIZE, YUBIKEY_OPERATION_TIMEOUT_MS);
 
-				if (bytes != REPORT_TYPE_FEATURE_DATA_SIZE)
-					throw new YubiKeyException("controlTransfer failed: " + bytes);
-			} finally {
-				this.connection.releaseInterface(this.device.getInterface(0));
-			}
+			if (bytes != REPORT_TYPE_FEATURE_DATA_SIZE)
+				throw new YubiKeyException("controlTransfer failed: " + bytes);
 		}
 	}
 }
