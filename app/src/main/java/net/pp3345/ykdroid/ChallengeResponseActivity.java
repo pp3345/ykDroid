@@ -138,6 +138,5 @@ public class ChallengeResponseActivity extends Activity implements ConnectionMan
 	protected void onNewIntent(final Intent intent) {
 		// This is kind of ugly but Android doesn't leave us any other choice
 		this.connectionManager.onReceive(this, intent);
-
 	}
 }
