@@ -108,13 +108,11 @@ class ConnectionManager extends BroadcastReceiver implements Application.Activit
 			return;
 
 		final IntentFilter filter = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
-		filter.addDataScheme(NfcYubiKey.YUBIKEY_NEO_NDEF_SCHEME);
-		filter.addDataAuthority(NfcYubiKey.YUBIKEY_NEO_NDEF_HOST, null);
 
 		NfcAdapter.getDefaultAdapter(this.activity).enableForegroundDispatch(this.activity,
 		                                                                     PendingIntent.getActivity(this.activity, -1, new Intent(this.activity, this.activity.getClass()), 0),
 		                                                                     new IntentFilter[]{filter},
-		                                                                     null);
+		                                                                     new String[][]{new String[]{IsoDep.class.getName()}});
 		this.isActivityResumed = true;
 	}
 
@@ -170,7 +168,7 @@ class ConnectionManager extends BroadcastReceiver implements Application.Activit
 					this.unplugReceiver = null;
 				}
 				break;
-			case NfcAdapter.ACTION_NDEF_DISCOVERED:
+			case NfcAdapter.ACTION_TECH_DISCOVERED:
 				final IsoDep isoDep = IsoDep.get((Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG));
 
 				if (isoDep == null) {
