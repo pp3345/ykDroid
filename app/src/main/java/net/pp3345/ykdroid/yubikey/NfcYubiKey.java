@@ -37,13 +37,19 @@ public class NfcYubiKey implements YubiKey {
 		this.tag = tag;
 	}
 
+	private void ensureConnected() throws IOException {
+		if (!this.tag.isConnected()) {
+			this.tag.connect();
+			this.tag.setTimeout(2000);
+		}
+	}
+
 	@Override
 	public byte[] challengeResponse(final Slot slot, final byte[] challenge) throws YubiKeyException {
 		slot.ensureChallengeResponseSlot();
 
 		try {
-			if (!this.tag.isConnected())
-				this.tag.connect();
+			this.ensureConnected();
 
 			final SelectFileApdu selectFileApdu = new SelectFileApdu(SelectFileApdu.SelectionControl.DF_NAME_DIRECT, SelectFileApdu.RecordOffset.FIRST_RECORD, CHALLENGE_AID);
 			if (!selectFileApdu.parseResponse(this.tag.transceive(selectFileApdu.build())).isSuccess()) {
