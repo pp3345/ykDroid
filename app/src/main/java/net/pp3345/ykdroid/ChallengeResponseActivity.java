@@ -26,7 +26,7 @@ import net.pp3345.ykdroid.yubikey.UsbYubiKey;
  */
 public class ChallengeResponseActivity extends Activity implements ConnectionManager.YubiKeyConnectReceiver, ConnectionManager.YubiKeyUsbUnplugReceiver, AdapterView.OnItemSelectedListener {
 	private ConnectionManager connectionManager;
-	private Slot selectedSlot = Slot.CHALLENGE_HMAC_2;
+	private Slot selectedSlot = Slot.CHALLENGE_HMAC_1;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ public class ChallengeResponseActivity extends Activity implements ConnectionMan
 		}
 
 		final Spinner slotSelection = this.findViewById(R.id.slotSelection);
-		slotSelection.setSelection(1);
+		slotSelection.setSelection(0);
 		slotSelection.setOnItemSelectedListener(this);
 
 		this.connectionManager.waitForYubiKey(this);
