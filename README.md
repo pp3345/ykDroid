@@ -5,7 +5,7 @@ of YubiKeys into other apps. Both USB and NFC (YubiKey NEO required for NFC) are
 ## Integration
 ykDroid provides an [Intent](https://developer.android.com/reference/android/content/Intent.html) called
 `net.pp3345.ykdroid.intent.action.CHALLENGE_RESPONSE`, which accepts an extra `byte[] challenge` and returns an extra
-`byte[] response`. Optionally, an extra `String purpose` may be passed additionaly in the intent to identify the purpose
+`byte[] response`. Optionally, an extra `String purpose` may be passed additionally in the intent to identify the purpose
 of the challenge. ykDroid will use this identifier to remember and pre-select the slot used for each purpose.
 
 Upon invocation, ykDroid will automatically detect which connection methods (USB and/or NFC) are available and show a dialog
