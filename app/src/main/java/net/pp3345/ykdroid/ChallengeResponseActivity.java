@@ -21,18 +21,24 @@ import net.pp3345.ykdroid.yubikey.UsbYubiKey;
  * to a YubiKey and receive the response.
  * <p>
  * The challenge must be passed in an extra <code>byte[] challenge</code>. Upon successful completion,
- * the activity returns an extra <code>byte[] response</code> in the result intent.
+ * the activity returns an extra <code>byte[] response</code> in the result intent. Optionally,
+ * an extra <code>String purpose</code> may be passed in the intent to identify the purpose of the
+ * challenge. ykDroid will use this identifier to remember and pre-select the slot used for each
+ * purpose.
  * </p>
  */
 public class ChallengeResponseActivity extends Activity implements ConnectionManager.YubiKeyConnectReceiver, ConnectionManager.YubiKeyUsbUnplugReceiver, AdapterView.OnItemSelectedListener {
 	private ConnectionManager connectionManager;
-	private Slot selectedSlot = Slot.CHALLENGE_HMAC_1;
+	private SlotPreferenceManager slotPreferenceManager;
+	private Slot selectedSlot;
+	private String purpose;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		this.connectionManager = new ConnectionManager(this);
+		this.slotPreferenceManager = new SlotPreferenceManager(this);
 
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.setContentView(R.layout.activity_challenge_response);
@@ -53,8 +59,20 @@ public class ChallengeResponseActivity extends Activity implements ConnectionMan
 				return;
 		}
 
+		this.purpose = this.getIntent().getStringExtra("purpose");
+		this.selectedSlot = this.slotPreferenceManager.getPreferredSlot(this.purpose, Slot.CHALLENGE_HMAC_1);
+
 		final Spinner slotSelection = this.findViewById(R.id.slotSelection);
-		slotSelection.setSelection(0);
+
+		switch (this.selectedSlot) {
+			case CHALLENGE_HMAC_1:
+				slotSelection.setSelection(0);
+				break;
+			case CHALLENGE_HMAC_2:
+				slotSelection.setSelection(1);
+				break;
+		}
+
 		slotSelection.setOnItemSelectedListener(this);
 
 		this.connectionManager.waitForYubiKey(this);
@@ -85,6 +103,8 @@ public class ChallengeResponseActivity extends Activity implements ConnectionMan
 				super.onPostExecute(bytes);
 
 				if (this.executionException == null) {
+					ChallengeResponseActivity.this.slotPreferenceManager.setPreferredSlot(ChallengeResponseActivity.this.purpose, ChallengeResponseActivity.this.selectedSlot);
+
 					final Intent result = new Intent();
 					result.putExtra("response", bytes);
 					ChallengeResponseActivity.this.setResult(RESULT_OK, result);
