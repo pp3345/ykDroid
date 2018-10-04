@@ -40,7 +40,7 @@ public class NfcYubiKey implements YubiKey {
 	private void ensureConnected() throws IOException {
 		if (!this.tag.isConnected()) {
 			this.tag.connect();
-			this.tag.setTimeout(2000);
+			this.tag.setTimeout(10000);
 		}
 	}
 
