@@ -11,4 +11,5 @@
         <item>Slot 1</item>
         <item>Slot 2</item>
     </string-array>
+    <string name="invalid_challenge">Es wurde keine gültige Challenge übergeben. Sollte das Problem bestehen bleiben, kontaktiere bitte den Entwickler der App, mit der du ykDroid benutzen möchtest.</string>
 </resources>

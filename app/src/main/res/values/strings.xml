@@ -6,6 +6,7 @@
     <string name="no_supported_connection_method">Your device supports neither USB host mode nor NFC. YubiKeys can not be used.</string>
     <string name="press_button">Please press the button on your YubiKey.</string>
     <string name="unplug_yubikey">An error has occurred. Please unplug your YubiKey.</string>
+    <string name="invalid_challenge">An invalid challenge was passed. If this problem persists, please contact the vendor of the app you are trying to use ykDroid with.</string>
     <string-array name="slots">
         <item>Slot 1</item>
         <item>Slot 2</item>

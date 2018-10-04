@@ -32,6 +32,7 @@ public class ChallengeResponseActivity extends Activity implements ConnectionMan
 	private SlotPreferenceManager slotPreferenceManager;
 	private Slot selectedSlot;
 	private String purpose;
+	private byte[] challenge;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -42,6 +43,13 @@ public class ChallengeResponseActivity extends Activity implements ConnectionMan
 
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.setContentView(R.layout.activity_challenge_response);
+
+		this.challenge = this.getIntent().getByteArrayExtra("challenge");
+		if (this.challenge == null || this.challenge.length == 0) {
+			this.showError();
+			((TextView) ChallengeResponseActivity.this.findViewById(R.id.info)).setText(R.string.invalid_challenge);
+			return;
+		}
 
 		switch (this.connectionManager.getSupportedConnectionMethods()) {
 			case ConnectionManager.CONNECTION_METHOD_USB | ConnectionManager.CONNECTION_METHOD_NFC:
@@ -91,7 +99,7 @@ public class ChallengeResponseActivity extends Activity implements ConnectionMan
 			@Override
 			protected byte[] doInBackground(final Void... nothing) {
 				try {
-					return yubiKey.challengeResponse(ChallengeResponseActivity.this.selectedSlot, ChallengeResponseActivity.this.getIntent().getByteArrayExtra("challenge"));
+					return yubiKey.challengeResponse(ChallengeResponseActivity.this.selectedSlot, ChallengeResponseActivity.this.challenge);
 				} catch (final Exception e) {
 					this.executionException = e;
 					return null;
