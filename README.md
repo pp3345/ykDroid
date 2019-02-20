@@ -1,6 +1,14 @@
-# ykDroid [![Get in on Google Play](google-play-badge.png "Get it on Google Play")](https://play.google.com/store/apps/details?id=net.pp3345.ykdroid)
+# ykDroid
+
 ykDroid is an Android app that provides an interface for integrating the challenge-response functionality
 of YubiKeys into other apps. Both USB and NFC (YubiKey NEO required for NFC) are supported on compatible devices.
+
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
+     alt="Get it on Google Play"
+     height="80">](https://play.google.com/store/apps/details?id=net.pp3345.ykdroid)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/net.pp3345.ykdroid/)
 
 ## Integration
 ykDroid provides an [Intent](https://developer.android.com/reference/android/content/Intent.html) called
