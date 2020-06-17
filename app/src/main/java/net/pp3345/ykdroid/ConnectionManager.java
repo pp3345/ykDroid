@@ -143,7 +143,7 @@ class ConnectionManager extends BroadcastReceiver implements Application.Activit
 		assert usbManager != null;
 
 		for (final UsbDevice device : usbManager.getDeviceList().values()) {
-			if (device.getVendorId() == UsbYubiKey.YUBICO_USB_VENDOR_ID)
+			if (UsbYubiKey.Type.isDeviceKnown(device))
 				return true;
 		}
 
@@ -162,7 +162,7 @@ class ConnectionManager extends BroadcastReceiver implements Application.Activit
 				this.requestPermission((UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE));
 				break;
 			case UsbManager.ACTION_USB_DEVICE_DETACHED:
-				if (((UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)).getVendorId() == UsbYubiKey.YUBICO_USB_VENDOR_ID) {
+				if (UsbYubiKey.Type.isDeviceKnown(((UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)))) {
 					this.activity.unregisterReceiver(this);
 					this.unplugReceiver.onYubiKeyUnplugged();
 					this.unplugReceiver = null;
@@ -202,7 +202,7 @@ class ConnectionManager extends BroadcastReceiver implements Application.Activit
 	private void requestPermission(final UsbDevice device) {
 		final UsbManager usbManager = (UsbManager) this.activity.getSystemService(Context.USB_SERVICE);
 
-		if (device.getVendorId() != UsbYubiKey.YUBICO_USB_VENDOR_ID)
+		if (!UsbYubiKey.Type.isDeviceKnown(device))
 			return;
 
 		assert usbManager != null;

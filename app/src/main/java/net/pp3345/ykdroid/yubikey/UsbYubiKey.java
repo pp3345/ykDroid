@@ -38,36 +38,49 @@ public class UsbYubiKey implements YubiKey {
 	 * An enumeration of all available YubiKey types. (Taken from Yubico's C driver implementation)
 	 */
 	public enum Type {
-		STANDARD(0x0010, "YubiKey", "Version 1 or 2"),
+		STANDARD(YUBICO_USB_VENDOR_ID, 0x0010, "YubiKey", "Version 1 or 2"),
 
-		NEO_OTP(0x0110, "YubiKey NEO", "OTP only"),
-		NEO_OTP_CCID(0x0111, "YubiKey NEO", "OTP and CCID"),
-		NEO_CCID(0x0112, "YubiKey NEO", "CCID only"),
-		NEO_U2F(0x0113, "YubiKey NEO", "U2F only"),
-		NEO_OTP_U2F(0x0114, "YubiKey NEO", "OTP and U2F"),
-		NEO_U2F_CCID(0x0115, "YubiKey NEO", "U2F and CCID"),
-		NEO_OTP_U2F_CCID(0x0116, "YubiKey NEO", "OTP, U2F and CCID"),
+		NEO_OTP(YUBICO_USB_VENDOR_ID, 0x0110, "YubiKey NEO", "OTP only"),
+		NEO_OTP_CCID(YUBICO_USB_VENDOR_ID, 0x0111, "YubiKey NEO", "OTP and CCID"),
+		NEO_CCID(YUBICO_USB_VENDOR_ID, 0x0112, "YubiKey NEO", "CCID only"),
+		NEO_U2F(YUBICO_USB_VENDOR_ID, 0x0113, "YubiKey NEO", "U2F only"),
+		NEO_OTP_U2F(YUBICO_USB_VENDOR_ID, 0x0114, "YubiKey NEO", "OTP and U2F"),
+		NEO_U2F_CCID(YUBICO_USB_VENDOR_ID, 0x0115, "YubiKey NEO", "U2F and CCID"),
+		NEO_OTP_U2F_CCID(YUBICO_USB_VENDOR_ID, 0x0116, "YubiKey NEO", "OTP, U2F and CCID"),
 
-		YK4_OTP(0x0401, "YubiKey 4", "OTP only"),
-		YK4_U2F(0x0402, "YubiKey 4", "U2F only"),
-		YK4_OTP_U2F(0x0403, "YubiKey 4", "OTP and U2F"),
-		YK4_CCID(0x0404, "YubiKey 4", "CCID only"),
-		YK4_OTP_CCID(0x0405, "YubiKey 4", "OTP and CCID"),
-		YK4_U2F_CCID(0x0406, "YubiKey 4", "U2F and CCID"),
-		YK4_OTP_U2F_CCID(0x0407, "YubiKey 4", "OTP, U2F and CCID"),
+		YK4_OTP(YUBICO_USB_VENDOR_ID, 0x0401, "YubiKey 4", "OTP only"),
+		YK4_U2F(YUBICO_USB_VENDOR_ID, 0x0402, "YubiKey 4", "U2F only"),
+		YK4_OTP_U2F(YUBICO_USB_VENDOR_ID, 0x0403, "YubiKey 4", "OTP and U2F"),
+		YK4_CCID(YUBICO_USB_VENDOR_ID, 0x0404, "YubiKey 4", "CCID only"),
+		YK4_OTP_CCID(YUBICO_USB_VENDOR_ID, 0x0405, "YubiKey 4", "OTP and CCID"),
+		YK4_U2F_CCID(YUBICO_USB_VENDOR_ID, 0x0406, "YubiKey 4", "U2F and CCID"),
+		YK4_OTP_U2F_CCID(YUBICO_USB_VENDOR_ID, 0x0407, "YubiKey 4", "OTP, U2F and CCID"),
 
-		PLUS_U2F_OTP(0x0410, "YubiKey Plus", "OTP and U2F"),
+		PLUS_U2F_OTP(YUBICO_USB_VENDOR_ID, 0x0410, "YubiKey Plus", "OTP and U2F"),
 
-		UNKNOWN(-0x1, "Unknown YubiKey", "");
+		ONLYKEY(0x1d50, 0x60fc, "OnlyKey", ""),
 
+		UNKNOWN(-0x1, -0x1, "Unknown YubiKey", "");
+
+		private final int    vendorID;
 		private final int    productID;
 		private final String name;
 		private final String version;
 
-		Type(final int productID, final String name, final String version) {
+		Type(final int vendorID, final int productID, final String name, final String version) {
+			this.vendorID = vendorID;
 			this.productID = productID;
 			this.name = name;
 			this.version = version;
+		}
+
+		/**
+		 * Gets the USB vendor ID of a YubiKey.
+		 *
+		 * @return USB vendor ID
+		 */
+		public int getVendorID() {
+			return this.vendorID;
 		}
 
 		/**
@@ -96,6 +109,20 @@ public class UsbYubiKey implements YubiKey {
 		public String getVersion() {
 			return this.version;
 		}
+
+		public static Type lookupDeviceType(final UsbDevice device) {
+			for (final Type type : Type.values()) {
+				if (type.getVendorID() == device.getVendorId() &&
+						type.getProductID() == device.getProductId()) {
+					return type;
+				}
+			}
+			return Type.UNKNOWN;
+		}
+
+		public static boolean isDeviceKnown(final UsbDevice device) {
+			return lookupDeviceType(device) != UNKNOWN;
+		}
 	}
 
 	private enum StatusMode {
@@ -120,13 +147,7 @@ public class UsbYubiKey implements YubiKey {
 	 * @return {@link Type} instance that describes the connected YubiKey
 	 */
 	public Type getType() {
-		for (final Type type : Type.values()) {
-			if (type.getProductID() == this.device.getProductId()) {
-				return type;
-			}
-		}
-
-		return Type.UNKNOWN;
+		return Type.lookupDeviceType(this.device);
 	}
 
 	/**
