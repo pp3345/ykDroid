@@ -58,9 +58,11 @@ public class UsbYubiKey implements YubiKey {
 
 		PLUS_U2F_OTP(YUBICO_USB_VENDOR_ID, 0x0410, "YubiKey Plus", "OTP and U2F"),
 
+		YK_UNKNOWN(YUBICO_USB_VENDOR_ID, -0x1, "Unknown YubiKey", ""),
+
 		ONLYKEY(0x1d50, 0x60fc, "OnlyKey", ""),
 
-		UNKNOWN(-0x1, -0x1, "Unknown YubiKey", "");
+		UNKNOWN(-0x1, -0x1, "Unknown Device", "");
 
 		private final int    vendorID;
 		private final int    productID;
@@ -113,10 +115,11 @@ public class UsbYubiKey implements YubiKey {
 		public static Type lookupDeviceType(final UsbDevice device) {
 			for (final Type type : Type.values()) {
 				if (type.getVendorID() == device.getVendorId() &&
-						type.getProductID() == device.getProductId()) {
+						(type.getProductID() == device.getProductId() || type.getProductID() == -0x1)) {
 					return type;
 				}
 			}
+
 			return Type.UNKNOWN;
 		}
 
