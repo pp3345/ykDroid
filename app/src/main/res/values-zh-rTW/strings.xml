@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ykDroid</string>
+    <string name="attach_yubikey">請插入您的 YubiKey 金鑰。</string>
+    <string name="attach_or_swipe_yubikey">請插入或刷您的 YubiKey 金鑰。</string>
+    <string name="swipe_yubikey">請刷您的 YubiKey 金鑰。</string>
+    <string name="no_supported_connection_method">您的裝置並不支援 USB 主持模式 (OTG) 或 NFC，因此無法使用 YubiKeys。</string>
+    <string name="press_button">請按下您的 YubiKey 金鑰按鈕。</string>
+    <string name="unplug_yubikey">發生了錯誤。請拔下您的 YubiKey。</string>
+    <string name="invalid_challenge">收到了無效的挑戰 (Challenge) 資料。如果此問題持續存在，請聯繫您試著使用 ykDroid 的應用程式開發者。</string>
+</resources>
