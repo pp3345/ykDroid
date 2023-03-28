@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">ykDroid</string>
+    <string name="attach_yubikey">Podłącz teraz swój klucz YubiKey.</string>
+    <string name="attach_or_swipe_yubikey">Podłącz do portu USB lub zbliż do czytnika NFC swój klucz YubiKey.</string>
+    <string name="swipe_yubikey">Zbliż teraz swój klucz YubiKey do czytnika NFC.</string>
+    <string name="no_supported_connection_method">Twoje urządzenie nie może pracować jako Host USB ani nie wspiera technologii NFC. Nie jest możliwe wykorzystanie klucza YubiKey.</string>
+    <string name="press_button">Wciśnij przycisk na kluczu YubiKey.</string>
+    <string name="unplug_yubikey">Wystąpił błąd. Odłącz klucz YubiKey.</string>
+    <string name="invalid_challenge">Mechanizm uwierzytelniania (challenge-response) przesłał nieprawidłowe zapytanie. Jeśli problem będzie się powtarzał, skontaktuj się proszę z dostawcą aplikacji, z którą ykDroid ma współpracować.</string>
+    <string-array name="slots">
+        <item>Slot 1</item>
+        <item>Slot 2</item>
+    </string-array>
+</resources>
