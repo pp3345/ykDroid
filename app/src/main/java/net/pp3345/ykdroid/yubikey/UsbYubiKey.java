@@ -18,7 +18,7 @@ public class UsbYubiKey implements YubiKey {
 	 */
 	@SuppressWarnings("WeakerAccess")
 	public static final  int  YUBICO_USB_VENDOR_ID                = 0x1050;
-	private static final int  YUBIKEY_OPERATION_TIMEOUT_MS        = 2000;
+	private static final int  YUBIKEY_OPERATION_TIMEOUT_MS        = 6000;
 	private static final int  YUBIKEY_USER_INTERACTION_TIMEOUT_MS = 256000;
 	private static final char YUBIKEY_CRC_16_OK_RESIDUAL          = 0xf0b8;
 
