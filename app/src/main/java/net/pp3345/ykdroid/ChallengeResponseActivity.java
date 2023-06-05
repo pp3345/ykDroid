@@ -17,7 +17,7 @@ import net.pp3345.ykdroid.yubikey.UsbYubiKey;
 
 /**
  * May be invoked by Android apps using the
- * <code>"net.pp3345.ykdroid.intent.action.CHALLENGE_RESPONSE"</code> intent to send a challenge
+ * <code>"android.yubikey.intent.action.CHALLENGE_RESPONSE"</code> intent to send a challenge
  * to a YubiKey and receive the response.
  * <p>
  * The challenge must be passed in an extra <code>byte[] challenge</code>. Upon successful completion,

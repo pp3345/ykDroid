@@ -12,7 +12,7 @@ of YubiKeys into other apps. Both USB and NFC (YubiKey NEO required for NFC) are
 
 ## Integration
 ykDroid provides an [Intent](https://developer.android.com/reference/android/content/Intent.html) called
-`net.pp3345.ykdroid.intent.action.CHALLENGE_RESPONSE`, which accepts an extra `byte[] challenge` and returns an extra
+`android.yubikey.intent.action.CHALLENGE_RESPONSE`, which accepts an extra `byte[] challenge` and returns an extra
 `byte[] response`. Optionally, an extra `String purpose` may be passed additionally in the intent to identify the purpose
 of the challenge. ykDroid will use this identifier to remember and pre-select the slot used for each purpose.
 
@@ -24,7 +24,7 @@ Example code:
 private static final int CHALLENGE_RESPONSE_REQUEST_CODE = 12345;
 
 private void startChallengeResponse(final byte[] challenge) {
-    final Intent intent = new Intent("net.pp3345.ykdroid.intent.action.CHALLENGE_RESPONSE");
+    final Intent intent = new Intent("android.yubikey.intent.action.CHALLENGE_RESPONSE");
     intent.putExtra("challenge", challenge);
     intent.putExtra("purpose", "some-unique-purpose-identifier"); // optional
 
@@ -43,6 +43,7 @@ public void onActivityResult(final int requestCode, final int resultCode, final 
 * [Keepass2Android](https://play.google.com/store/apps/details?id=keepass2android.keepass2android) - Password manager
   app compatible with KeePass
 * [ykpass](https://github.com/noliran/ykpass) - Password app that derives passwords directly from the YubiKey's response value
+* [KeePassDX](https://www.keepassdx.com/) - Another password manager app compatible with KeePass
 
 ## Contributing
 PRs welcome! I am open for adding more YubiKey functionality, but bugfixes and additional translations are also very

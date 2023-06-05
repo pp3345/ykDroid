@@ -24,6 +24,10 @@
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.MinWidth"
             android:configChanges="keyboard|screenSize|screenLayout|touchscreen|locale|keyboardHidden|navigation">
             <intent-filter>
+                <action android:name="android.yubikey.intent.action.CHALLENGE_RESPONSE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
                 <action android:name="net.pp3345.ykdroid.intent.action.CHALLENGE_RESPONSE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
